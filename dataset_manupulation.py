@@ -9,18 +9,23 @@ df=pd.read_csv('Salary_Data.csv')
 
 table_name='Salary_data'
 df.columns=df.columns.str.replace(" ","_")
-d_clm_nms = {}
-for col in df.columns:
+print(df.columns)
+d_clm_nms = {
+    'Age':'int',
+    'Gender':'varchar(10)',
+    'Education':'varchar(20)',
+    'Job_Title':'varchar(50)',
+    'Years_of_Experience':'varchar(30)',
+    'Salary':'int'
+}
 
-    if df[col].dtype == 'float':
-        d_clm_nms[df[col]] = "float"
-        df[col] = df[col].astype(float)
-    elif df[col].dtype == 'object':
-        df[col] = df[col].astype(str)
-
-create_table_query=f"create table if not exists {table_name} ({', '.join([f'{col} {df[col].dtype}' for col in d_clm_nms])})" col[]
+create_table_query=f"create table if not exists {table_name} ({', '.join([f'{col} {d_clm_nms[col]}' for col in d_clm_nms])})" 
 cur.execute(create_table_query)
 
+for index, row in df.iterrows():
+        insert_query = f"INSERT INTO {table_name} ({', '.join(df.columns)}) VALUES ({', '.join(['%s' for val in df.columns])})"
+        values = tuple(row)
+        cur.execute(insert_query, values)
 conn.commit()
 
 
